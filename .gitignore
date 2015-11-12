@@ -11,3 +11,9 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+
+# Raw Data
+mothur/PondPostDNA.sff
+mothur/PondPostcDNA.sff
+mothur/PondPreDNA.sff
+mothur/PondPrecDNA.sff

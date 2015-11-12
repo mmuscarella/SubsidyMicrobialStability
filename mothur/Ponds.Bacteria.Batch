@@ -1,0 +1,113 @@
+# Initial Processing
+sffinfo(sff=PondPreDNA.sff-PondPrecDNA.sff-PondPostDNA.sff-PondPostcDNA.sff, flow=F)
+summary.seqs(fasta=PondPreDNA.fasta, processors=8)
+summary.seqs(fasta=PondPrecDNA.fasta, processors=8)
+summary.seqs(fasta=PondPostDNA.fasta, processors=8)
+summary.seqs(fasta=PondPostcDNA.fasta, processors=8)
+
+# Seperate processing for each set
+# PondPreDNA
+summary.seqs(fasta=PondPreDNA.fasta, processors=8)
+trim.seqs(fasta=PondPreDNA.fasta, oligos=PondsPreDNA.oligos, qfile=PondPreDNA.qual, maxambig=0, maxhomop=8, bdiffs=1, pdiffs=2, qwindowaverage=35, qwindowsize=50)
+summary.seqs(fasta=PondPreDNA.trim.fasta, processors=8)
+screen.seqs(fasta=PondPreDNA.trim.fasta, group=PondPreDNA.groups, minlength=200)
+summary.seqs(fasta=PondPreDNA.trim.good.fasta, processors=8)
+count.groups(group=PondPreDNA.good.groups)
+unique.seqs(fasta=PondPreDNA.trim.good.fasta)
+summary.seqs(fasta=PondPreDNA.trim.good.unique.fasta, name=PondPreDNA.trim.good.names, processors=8)
+count.groups(group=PondPreDNA.good.groups)
+
+# PondPrecDNA
+summary.seqs(fasta=PondPrecDNA.fasta, processors=8)
+trim.seqs(fasta=PondPrecDNA.fasta, oligos=PondsPrecDNA.oligos, qfile=PondPrecDNA.qual, maxambig=0, maxhomop=8, bdiffs=1, pdiffs=2, qwindowaverage=35, qwindowsize=50)
+summary.seqs(fasta=PondPrecDNA.trim.fasta, processors=8)
+screen.seqs(fasta=PondPrecDNA.trim.fasta, group=PondPrecDNA.groups, minlength=200)
+summary.seqs(fasta=PondPrecDNA.trim.good.fasta, processors=8)
+count.groups(group=PondPrecDNA.good.groups)
+unique.seqs(fasta=PondPrecDNA.trim.good.fasta)
+summary.seqs(fasta=PondPrecDNA.trim.good.unique.fasta, name=PondPrecDNA.trim.good.names, processors=8)
+count.groups(group=PondPrecDNA.good.groups)
+
+# PondPostDNA
+summary.seqs(fasta=PondPostDNA.fasta, processors=8)
+trim.seqs(fasta=PondPostDNA.fasta, oligos=PondsPostDNA.oligos, qfile=PondPostDNA.qual, maxambig=0, maxhomop=8, bdiffs=1, pdiffs=2, qwindowaverage=35, qwindowsize=50)
+summary.seqs(fasta=PondPostDNA.trim.fasta, processors=8)
+screen.seqs(fasta=PondPostDNA.trim.fasta, group=PondPostDNA.groups, minlength=200)
+summary.seqs(fasta=PondPostDNA.trim.good.fasta, processors=8)
+count.groups(group=PondPostDNA.good.groups)
+unique.seqs(fasta=PondPostDNA.trim.good.fasta)
+summary.seqs(fasta=PondPostDNA.trim.good.unique.fasta, name=PondPostDNA.trim.good.names, processors=8)
+count.groups(group=PondPostDNA.good.groups)
+
+# PondPostcDNA
+summary.seqs(fasta=PondPostcDNA.fasta)
+trim.seqs(fasta=PondPostcDNA.fasta, oligos=PondsPostcDNA.oligos, qfile=PondPostcDNA.qual, maxambig=0, maxhomop=8, bdiffs=1, pdiffs=2, qwindowaverage=35, qwindowsize=50)
+summary.seqs(fasta=PondPostcDNA.trim.fasta, processors=8)
+screen.seqs(fasta=PondPostcDNA.trim.fasta, group=PondPostcDNA.groups, minlength=200)
+summary.seqs(fasta=PondPostcDNA.trim.good.fasta, processors=8)
+count.groups(group=PondPostcDNA.good.groups)
+unique.seqs(fasta=PondPostcDNA.trim.good.fasta)
+summary.seqs(fasta=PondPostcDNA.trim.good.unique.fasta, name=PondPostcDNA.trim.good.names, processors=8)
+count.groups(group=PondPostcDNA.good.groups)
+
+# Merge All Files
+merge.files(input=PondPreDNA.trim.good.unique.fasta-PondPrecDNA.trim.good.unique.fasta-PondPostDNA.trim.good.unique.fasta-PondPostcDNA.trim.good.unique.fasta, output=Pond_all.fasta)
+merge.files(input=PondPreDNA.trim.good.names-PondPrecDNA.trim.good.names-PondPostDNA.trim.good.names-PondPostcDNA.trim.good.names, output=Pond_all.names)
+merge.files(input=PondPreDNA.good.groups-PondPrecDNA.good.groups-PondPostDNA.good.groups-PondPostcDNA.good.groups, output=Pond_all.groups)
+summary.seqs(fasta=Pond_all.fasta, name=Pond_all.names, processors=8)
+count.groups(group=Pond_all.groups)
+
+# Alignment
+align.seqs(fasta=Pond_all.fasta, template=silva.v4.fasta, flip=T, processors=8)
+summary.seqs(fasta=Pond_all.align, name=Pond_all.names, processors=8)
+screen.seqs(fasta=Pond_all.align, group=Pond_all.groups, name=Pond_all.names, start=13862, minlength=200, processors=8)
+filter.seqs(fasta=Pond_all.good.align, vertical=T, trump=., processors=8)
+pre.cluster(fasta=Pond_all.good.filter.fasta, name=Pond_all.good.names, diffs=1, processors=1)
+summary.seqs(fasta=Pond_all.good.filter.precluster.fasta, name=Pond_all.good.filter.precluster.names, processors=8)
+count.groups(group=Pond_all.good.groups)
+
+# Chimera Check
+chimera.uchime(fasta=Pond_all.good.filter.precluster.fasta, reference=silva.gold.ng.fasta, processors=8)
+remove.seqs(accnos=Pond_all.good.filter.precluster.uchime.accnos, fasta=Pond_all.good.filter.precluster.fasta, name=Pond_all.good.filter.precluster.names, group=Pond_all.good.groups)
+summary.seqs(fasta=Pond_all.good.filter.precluster.pick.fasta, name=Pond_all.good.filter.precluster.pick.names, processors=8)
+
+# Remove Contaminants
+classify.seqs(fasta=Pond_all.good.filter.precluster.pick.fasta, name=Pond_all.good.filter.precluster.pick.names, group=Pond_all.good.pick.groups, template=silva.bacteria.fasta, taxonomy=silva.bacteria.rdp6.tax, cutoff=80, processors=8)
+remove.lineage(fasta=Pond_all.good.filter.precluster.pick.fasta, name=Pond_all.good.filter.precluster.pick.names, group=Pond_all.good.pick.groups, taxonomy=Pond_all.good.filter.precluster.pick.rdp6.wang.taxonomy, taxon=Archaea-Eukarya-Mitochondria-Chloroplast)
+summary.seqs(fasta=Pond_all.good.filter.precluster.pick.pick.fasta, name=Pond_all.good.filter.precluster.pick.pick.names, processors=8)
+count.groups(group=Pond_all.good.pick.pick.groups)
+classify.seqs(fasta=Pond_all.good.filter.precluster.pick.pick.fasta, name=Pond_all.good.filter.precluster.pick.pick.names, group=Pond_all.good.pick.pick.groups, template=silva.bacteria.fasta, taxonomy=silva.bacteria.rdp6.tax, cutoff=80, processors=8)
+remove.lineage(fasta=Pond_all.good.filter.precluster.pick.pick.fasta, name=Pond_all.good.filter.precluster.pick.pick.names, group=Pond_all.good.pick.pick.groups, taxonomy=Pond_all.good.filter.precluster.pick.pick.rdp6.wang.taxonomy, taxon=unknown)
+remove.seqs(accnos=Pond_all.good.filter.precluster.pick.pick.rdp6.wang.flip.accnos, fasta=Pond_all.good.filter.precluster.pick.pick.pick.fasta, name=Pond_all.good.filter.precluster.pick.pick.pick.names, group=Pond_all.good.pick.pick.pick.groups)
+summary.seqs(fasta=Pond_all.good.filter.precluster.pick.pick.pick.pick.fasta, name=Pond_all.good.filter.precluster.pick.pick.pick.pick.names, processors=8)
+count.groups(group=Pond_all.good.pick.pick.pick.pick.groups)
+
+# Rename Files
+system(mv ./Pond_all.good.filter.precluster.pick.pick.pick.pick.fasta ./Pond_all.final.fasta)
+system(mv ./Pond_all.good.filter.precluster.pick.pick.pick.pick.names ./Pond_all.final.names)
+system(mv ./Pond_all.good.pick.pick.pick.pick.groups ./Pond_all.final.groups)
+
+# RDP Database Taxonomy
+classify.seqs(fasta=Pond_all.final.fasta, name=Pond_all.final.names, group=Pond_all.final.groups, template=trainset9_032012.pds.fasta, taxonomy=trainset9_032012.pds.tax, processors=8)
+system(mv ./Pond_all.final.pds.wang.taxonomy ./Pond_all.final.RDP.taxonomy)
+
+# Silva Database Taxonomy
+classify.seqs(fasta=Pond_all.final.fasta, name=Pond_all.final.names, group=Pond_all.final.groups, template=silva.bacteria.fasta, taxonomy=silva.bacteria.rdp6.tax, processors=8)
+system(mv ./Pond_all.final.rdp6.wang.taxonomy ./Pond_all.final.Silva.taxonomy)
+
+# Freshwater Database Taxonomy
+classify.seqs(fasta=Pond_all.final.fasta, name=Pond_all.final.names, group=Pond_all.final.groups, template=FW_trainingset_MMBR_strict_3Aug11.fasta, taxonomy=FW_trainingset_MMBR_strict_3Aug11.taxonomy, processors=8)
+system(mv ./Pond_all.final.FW_trainingset_MMBR_strict_3Aug11.wang.taxonomy ./Pond_all.final.FW.taxonomy)
+
+# 97% OTUs Shared
+cluster.split(fasta=Pond_all.final.fasta, name=Pond_all.final.names, taxonomy=Pond_all.final.Silva.taxonomy, splitmethod=classify, taxlevel=3, processors=8)
+make.shared(list=Pond_all.final.an.list, group=Pond_all.final.groups, label=unique-0.03-0.05-0.10)
+classify.otu(list=Pond_all.final.an.list, name=Pond_all.final.names, taxonomy=Pond_all.final.Silva.taxonomy, label=unique-0.03-0.05-0.10)
+
+# Lake Database Phylotypes
+phylotype(taxonomy=Pond_all.final.FW.taxonomy, name=Pond_all.final.names, label=1-2-3)
+make.shared(list=Pond_all.final.FW.tx.list, group=Pond_all.final.groups, label=1-2-3)
+classify.otu(taxonomy=Pond_all.final.Silva.taxonomy, reftaxonomy=silva.bacteria.rdp6.tax, list=Pond_all.final.FW.tx.list, name=Pond_all.final.names, label=1-2-3)
+get.oturep(fasta=Pond_all.final.fasta, list=Pond_all.final.FW.tx.list, name=Pond_all.final.names, method=abundance)
+classify.seqs(fasta=Pond_all.final.FW.tx.1.rep.fasta, name=Pond_all.final.names, template=silva.bacteria.fasta, taxonomy=silva.bacteria.rdp6.tax, processors=8)
+classify.seqs(fasta=Pond_all.final.FW.tx.1.rep.fasta, name=Pond_all.final.names, template=FW_trainingset_MMBR_strict_3Aug11.fasta, taxonomy=FW_trainingset_MMBR_strict_3Aug11.taxonomy, processors=8)

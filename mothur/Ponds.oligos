@@ -1,0 +1,28 @@
+#####Lennon Lab 16s 454 Oligos File#########
+###USE '#' to ignore line #####
+###You may need to add GT in front of both forward and reverse primers#####
+
+forward	GTGCCAGCMGCCGCGGTAA
+# reverse GGACTACVSGGGTATCTAAT <- not needed due to primer design, but included for your notes.
+
+
+###barcode	____________	'name' <- Fill in names based on experiment
+barcode AACGCACGCTAG	Pond_3	#1
+barcode ACACTGTTCATG	Pond_4	#2
+barcode ACCAGACGATGC	Pond_5	#3
+barcode ACGCTCATGGAT	Pond_7	#4
+barcode ACTCACGGTATG	Pond_8	#5
+barcode AGACCGTCAGAC	Pond_9	#6
+barcode AGCACGAGCCTA	Pond_10	#7
+barcode ACAGACCACTCA	Pond_13	#8
+barcode ACCAGCGACTAG	Pond_14	#9
+barcode ACGGATCGTCAG	Pond_15	#10
+barcode AGCTTGACAGCT	Pond_16	#11
+#barcode AACTGTGCGTAC	_____	#12
+#barcode ACCGCAGAGTCA	_____	#13
+#barcode ACGGTGAGTGTC	_____	#14
+#barcode ACTCGATTCGAT	_____	#15
+#barcode AGACTGCGTACT	_____	#16
+
+	
+	

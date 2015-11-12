@@ -1,0 +1,73 @@
+#NEXUS
+[R-package APE, Mon May 18 16:08:33 2015]
+
+BEGIN TAXA;
+	DIMENSIONS NTAX = 30;
+	TAXLABELS
+		Otu020
+		Otu022
+		Otu031
+		Otu004
+		Otu009
+		Otu102
+		Otu100
+		Otu049
+		Otu043
+		Otu053
+		Otu041
+		Otu011
+		Otu108
+		Otu106
+		Otu028
+		Otu098
+		Otu008
+		Otu097
+		Otu034
+		Otu030
+		Otu101
+		Otu080
+		Otu085
+		Otu072
+		Otu110
+		Otu005
+		Otu047
+		Otu069
+		Otu083
+		Aquifex
+	;
+END;
+BEGIN TREES;
+	TRANSLATE
+		1	Otu020,
+		2	Otu022,
+		3	Otu031,
+		4	Otu004,
+		5	Otu009,
+		6	Otu102,
+		7	Otu100,
+		8	Otu049,
+		9	Otu043,
+		10	Otu053,
+		11	Otu041,
+		12	Otu011,
+		13	Otu108,
+		14	Otu106,
+		15	Otu028,
+		16	Otu098,
+		17	Otu008,
+		18	Otu097,
+		19	Otu034,
+		20	Otu030,
+		21	Otu101,
+		22	Otu080,
+		23	Otu085,
+		24	Otu072,
+		25	Otu110,
+		26	Otu005,
+		27	Otu047,
+		28	Otu069,
+		29	Otu083,
+		30	Aquifex
+	;
+	TREE * UNTITLED = [&R] (((((((1,2),3),(4,(5,6))),(7,((8,9),((10,11),(((12,13),14),15))))),(((16,17),18),((19,20),(21,(22,(23,(24,25))))))),(26,(27,(28,29)))),30);
+END;
