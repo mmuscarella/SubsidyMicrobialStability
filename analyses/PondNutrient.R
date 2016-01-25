@@ -12,7 +12,7 @@
 
 # Setup Work Environment
 rm(list=ls())
-setwd("~./GitHub/pond-microbes/")
+setwd("~/GitHub/SubsidyMicrobialStability/")
 require(reshape)
 
 # Import Data
@@ -93,6 +93,20 @@ mtext(expression(paste("SRP (µg P L"^" -1",")", sep="")),
 mtext(expression(paste("DOC Supply (mg C L"^" -1",")", sep="")),
       side=1, line=3, cex=1.5)
 box(lwd=2)
+
+# TP vs Carbon
+TP.pre <- TP[TP$Date > "2009-08-05" & TP$Date < "2009-08-25", ]
+TP.pre2 <- merge(TP.pre, design, by="Pond")
+colnames(TP.pre2) <- c("Pond", "Date", "ppm", "plank", "supply")
+TP.model <- lm(TP.pre2$ppm ~ TP.pre2$supply)
+summary(TP.model)
+
+# TN vs Carbon
+TN.pre <- TN[TN$Date > "2009-08-05" & TN$Date < "2009-08-25", ]
+TN.pre2 <- merge(TN.pre, design, by="Pond")
+colnames(TN.pre2) <- c("Pond", "Date", "ppm", "plank", "supply")
+TN.model <- lm(TN.pre2$ppm ~ TN.pre2$supply)
+summary(TN.model)
 
 # Useful Dates
 day60s <- min(which(TN.data2$Date == "2009-08-05"))
