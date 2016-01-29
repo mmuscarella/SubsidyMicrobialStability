@@ -14,6 +14,7 @@
 rm(list=ls())
 setwd("~/GitHub/SubsidyMicrobialStability/")
 require(reshape)
+require(png)
 
 # Import Data
 TN.data <- read.delim("./data/PondNitrogen_10-23-09.txt", header=T)
@@ -54,8 +55,11 @@ SRP.w$low <- apply(SRP.w[,3:13], 1, quantile, na.rm=T, type=5)[2,]
 SRP.w$high <- apply(SRP.w[,3:13], 1, quantile, na.rm=T, type=5)[4,]
 
 # SRP Timeseries Plot
-windows.options(width=8, height=2.5)
-windows()
+# quartz.options(width=8, height=2.5)
+# quartz()
+png(filename="./figures/SRPSeries.png",
+    width = 800, height = 250, res = 96)
+
 par(mfrow=c(1,1), mar=c(3,5,0.5,0.5))
 plot(SRP.w$mn ~ SRP.w$Date,
      type='n', lwd=2, xlab="Time", xaxt='n',
@@ -82,7 +86,10 @@ peak.srp <- merge(peak.srp, design, by="Pond")
 colnames(peak.srp) <- c("Pond", "Date", "ppm", "plank", "supply")
 
 # SRP Peak Plot
-windows.options(width=8, height=4)
+# quartz.options(width=8, height=4)
+png(filename="./figures/SRPPeak.png",
+    width = 800, height = 400, res = 96)
+
 par(mar=c(5,5,0.5,0.5))
 plot(peak.srp$ppm ~ peak.srp$supply,
      type='p', xlab='', yaxt='n',
@@ -93,6 +100,9 @@ mtext(expression(paste("SRP (µg P L"^" -1",")", sep="")),
 mtext(expression(paste("DOC Supply (mg C L"^" -1",")", sep="")),
       side=1, line=3, cex=1.5)
 box(lwd=2)
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices
+
 
 # TP vs Carbon
 TP.pre <- TP[TP$Date > "2009-08-05" & TP$Date < "2009-08-25", ]
@@ -100,13 +110,113 @@ TP.pre2 <- merge(TP.pre, design, by="Pond")
 colnames(TP.pre2) <- c("Pond", "Date", "ppm", "plank", "supply")
 TP.model <- lm(TP.pre2$ppm ~ TP.pre2$supply)
 summary(TP.model)
+TP.model2 <- lm(TP.pre2$ppm ~ TP.pre2$supply + TP.pre2$Date)
+summary(TP.model2)
+
+# TP Carbon Plot
+
+png(filename="./figures/TP_Carbon.png",
+    width = 800, height = 250, res = 96)
+par(mfrow=c(1,1), mar=c(5,5,0.5,0.5))
+plot(TP.pre2$ppm ~ TP.pre2$supply,
+     pch = 22, lwd=2, xlab="", 
+     yaxt='n', ylab="", ylim=c(10,90))
+axis(side=2, labels=T, las=2, at=seq(10,90,20))
+mtext(expression(paste("TP (µg P L"^"-1",")", sep="")),
+      side=2, line=2.5, cex=1.5)
+mtext(expression(paste("DOC Supply (mg C L"^" -1",")", sep="")),
+      side=1, line=3, cex=1.5)
+abline(TP.model$coefficients[1], TP.model$coefficients[2], lty = 2, lwd = 2)
+box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices
+
+
+# TP Calculations
+TP.m <- melt(TP.pre, id.vars=c("Pond","Date"), measure.vars="ppm")
+TP.w <- na.omit(as.data.frame(cast(TP.m, ... ~ Pond)))
+TP.w[,3:13][TP.w[,3:13] < 0] <- 0
+TP.w <- TP.w[rowMeans(TP.w[,3:13]) > 0,]
+
+TP.w$mn <- apply(TP.w[,3:13], 1, mean, na.rm=T)
+TP.w$mid <- apply(TP.w[,3:13], 1, quantile, na.rm=T)[3,]
+TP.w$low <- apply(TP.w[,3:13], 1, quantile, na.rm=T, type=5)[2,]
+TP.w$high <- apply(TP.w[,3:13], 1, quantile, na.rm=T, type=5)[4,]
+
+# TP Timeseries Plot
+# quartz.options(width=8, height=2.5)
+# quartz()
+
+png(filename="./figures/TPSeries.png",
+    width = 800, height = 250, res = 96)
+par(mfrow=c(1,1), mar=c(3,5,0.5,0.5))
+plot(TP.w$mn ~ TP.w$Date,
+     type='n', lwd=2, xlab="Time", xaxt='n',
+     yaxt='n', ylab="", ylim=c(10,50))
+X.Vec <- c(TP.w$Date, tail(TP.w$Date, 1), rev(TP.w$Date), head(TP.w$Date, 1))
+Y.Vec <- c(TP.w$high, tail(TP.w$low, 1), rev(TP.w$low), head(TP.w$high,1))
+polygon(X.Vec, Y.Vec, col = "gray85", border = NA)
+points(TP.w$mid ~ TP.w$Date, type='l', lwd=2, lty=1)
+points(TP.w$low ~ TP.w$Date, type='l', lwd=1, lty=2)
+points(TP.w$high ~ TP.w$Date, type='l', lwd=1, lty=2)
+axis(side=2, labels=T, las=2, at=seq(10,50,10))
+axis(side=1, labels=c("Day 65", "Day 70", "Day 75"), las=1,
+     at = c(as.Date("2009-08-11"), as.Date("2009-08-16"), 
+                    as.Date("2009-08-21")))
+mtext(expression(paste("TP (µg P L"^"-1",")", sep="")),
+      side=2, line=2.5, cex=1.5)
+box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices
+
+
 
 # TN vs Carbon
 TN.pre <- TN[TN$Date > "2009-08-05" & TN$Date < "2009-08-25", ]
 TN.pre2 <- merge(TN.pre, design, by="Pond")
 colnames(TN.pre2) <- c("Pond", "Date", "ppm", "plank", "supply")
-TN.model <- lm(TN.pre2$ppm ~ TN.pre2$supply)
+TN.model <- lm(TN.pre2$ppm ~ TN.pre2$Date + TN.pre2$supply)
 summary(TN.model)
+
+# TN Calculations
+TN.m <- melt(TN.pre, id.vars=c("Pond","Date"), measure.vars="ppm")
+TN.w <- na.omit(as.data.frame(cast(TN.m, ... ~ Pond)))
+TN.w[,3:13][TN.w[,3:13] < 0] <- 0
+TN.w <- TN.w[rowMeans(TN.w[,3:13]) > 0,]
+
+TN.w$mn <- apply(TN.w[,3:13], 1, mean, na.rm=T)
+TN.w$mid <- apply(TN.w[,3:13], 1, quantile, na.rm=T)[3,]
+TN.w$low <- apply(TN.w[,3:13], 1, quantile, na.rm=T, type=5)[2,]
+TN.w$high <- apply(TN.w[,3:13], 1, quantile, na.rm=T, type=5)[4,]
+
+# TN Timeseries Plot
+# quartz.options(width=8, height=2.5)
+# quartz()
+
+png(filename="./figures/TNSeries.png",
+    width = 800, height = 250, res = 96)
+par(mfrow=c(1,1), mar=c(3,5,0.5,0.5))
+plot(TN.w$mn ~ TN.w$Date,
+     type='n', lwd=2, xlab="Time", xaxt='n',
+     yaxt='n', ylab="", ylim=c(0,1.5))
+X.Vec <- c(TN.w$Date, tail(TN.w$Date, 1), rev(TN.w$Date), head(TN.w$Date, 1))
+Y.Vec <- c(TN.w$high, tail(TN.w$low, 1), rev(TN.w$low), head(TN.w$high,1))
+polygon(X.Vec, Y.Vec, col = "gray85", border = NA)
+points(TN.w$mid ~ TN.w$Date, type='l', lwd=2, lty=1)
+points(TN.w$low ~ TN.w$Date, type='l', lwd=1, lty=2)
+points(TN.w$high ~ TN.w$Date, type='l', lwd=1, lty=2)
+axis(side=2, labels=T, las=2, at=seq(0,1.5,0.5))
+axis(side=1, labels=c("Day 65", "Day 70", "Day 75"), las=1,
+     at = c(as.Date("2009-08-11"), as.Date("2009-08-16"), 
+            as.Date("2009-08-21")))
+mtext(expression(paste("TN (mg N L"^"-1",")", sep="")),
+      side=2, line=2.5, cex=1.5)
+box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices
 
 # Useful Dates
 day60s <- min(which(TN.data2$Date == "2009-08-05"))
