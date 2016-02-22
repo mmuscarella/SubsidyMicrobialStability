@@ -39,11 +39,14 @@
 
 # Setup Work Environment (Directory, Packages, Source Code, Functions)
 rm(list=ls())
-setwd("~/GitHub/pond-microbes")
+setwd("~/GitHub/SubsidyMicrobialStability")
 require("vegan")
 source("./bin/DiversityFunctions.R")
 source("./bin/MothurTools.R")
 se <- function(x, ...){sd(x, ...)/sqrt(length(na.omit(x)))}
+
+# Save Standard Plot Settings
+opar <- par(no.readonly = TRUE)  # Saves plot defaults
 
 # Define Inputs
 # Design       = general design file for experiment
@@ -158,18 +161,30 @@ respond.seqs <- sum(colSums(responder.matrix))
 respond.seqs/total.seqs
 total.otu <- dim(PondPhylo.p)[2]
 
+respond.seqsDNA <- PondPhylo.p[which(design$MolTime == "DNA_Pre"), DNA.names]
+total.seqsDNA <- sum(colSums(PondPhylo.p[which(design$MolTime == "DNA_Pre"), ]))
+respond.seqsDNA <- sum(colSums(respond.seqsDNA))
+respond.seqsDNA / total.seqsDNA
+
+respond.seqsRNA <- PondPhylo.p[which(design$MolTime == "RNA_Pre"), RNA.names]
+total.seqsRNA <- sum(colSums(PondPhylo.p[which(design$MolTime == "RNA_Pre"), ]))
+respond.seqsRNA <- sum(colSums(respond.seqsRNA))
+respond.seqsRNA / total.seqsRNA
 
 # Exmaple Graphs ###############################################################
-windows.options(width=6, height=6)
-par(mar=c(5,5,1,1))
+png(filename="./figures/Pond_Increase.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+
+par(mar=c(6,7,1,1))
 plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu008"])
      ~ design_DNA$Loading, ylim = log(c(0.0008, 0.1)),
      bg="gray", col="black", pch=21, cex=2.5, lwd=2,
      las = 1, axes = FALSE, xlab="", ylab="")
   lines(lowess(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu008"])
                ~ design_DNA$Loading), lwd = 4, lty = 2)
-  axis(side = 1, labels=T, lwd.ticks=2, cex=1.5)
-  axis(side = 2, lwd.ticks=2, cex=1.5, las = 1,
+  axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
+  axis(side = 2, lwd.ticks=2, cex=1.75, las = 1,
        labels=c(0.001, 0.01, 0.1), at=log(c(0.001, 0.01, 0.1)))
   axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
   axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
@@ -178,21 +193,27 @@ plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu008"])
   axis(side = 2, tck=-0.015, labels=F, lwd.ticks=2,
        at=log(c(seq(0.002, 0.009, 0.001), seq(0.01, 0.1, 0.01))))
   mtext(expression(paste("tDOC Supply Rate (g" %.% "m"^"-2",")")),
-        side=1, line=3.5, cex=2)
-  mtext("Relative Abundance", side=2, line=3, cex=2)
+        side=1, line=4, cex=2)
+  mtext("Relative Abundance", side=2, line=4, cex=2)
   legend("topleft", "OTU008", bty = 'n', cex = 1.5, x.intersp = -0.5)
   box(lwd=2)
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)
 
-windows.options(width=6, height=6)
-par(mar=c(5,5,1,1))
+png(filename="./figures/Pond_Decrease.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+
+par(mar=c(6,7,1,1))
 plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu011"])
      ~ design_DNA$Loading, ylim = log(c(0.0008, 0.1)),
      bg="gray", col="black", pch=21, cex=2.5, lwd=2,
      las = 1, axes = FALSE, xlab="", ylab="")
   lines(lowess(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu011"])
                ~ design_DNA$Loading), lwd = 4, lty = 2)
-  axis(side = 1, labels=T, lwd.ticks=2, cex=1.5)
-  axis(side = 2, lwd.ticks=2, cex=1.5, las = 1,
+  axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
+  axis(side = 2, lwd.ticks=2, cex=1.75, las = 1,
        labels=c(0.001, 0.01, 0.1), at=log(c(0.001, 0.01, 0.1)))
   axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
   axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
@@ -201,7 +222,10 @@ plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu011"])
   axis(side = 2, tck=-0.015, labels=F, lwd.ticks=2,
        at=log(c(seq(0.002, 0.009, 0.001), seq(0.01, 0.1, 0.01))))
   mtext(expression(paste("tDOC Supply Rate (g" %.% "m"^"-2",")")),
-        side=1, line=3.5, cex=2)
-  mtext("Relative Abundance", side=2, line=3, cex=2)
+        side=1, line=4, cex=2)
+  mtext("Relative Abundance", side=2, line=4, cex=2)
   legend("topright", c("OTU011"), bty = 'n', cex = 1.5)
   box(lwd=2)
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)

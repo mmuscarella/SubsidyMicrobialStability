@@ -37,11 +37,14 @@
 
 # Setup Work Environment (Directory, Packages, Source Code, Functions)
 rm(list=ls())
-setwd("~/GitHub/pond-microbes")
+setwd("~/GitHub/SubsidyMicrobialStability")
 require("vegan")
 source("./bin/DiversityFunctions.R")
 source("./bin/MothurTools.R")
 se <- function(x, ...){sd(x, ...)/sqrt(length(na.omit(x)))}
+
+# Save Standard Plot Settings
+opar <- par(no.readonly = TRUE)  # Saves plot defaults
 
 # Define Inputs
   # Design       = general design file for experiment
@@ -122,8 +125,12 @@ model.rna <- lm(mean ~ Loading, data=rich_data_RNA)
 
 fill.color <- ifelse(rich_data$Molecule=="DNA", "gray", "black")
 symbol <- ifelse(rich_data$Molecule=="DNA", 21, 17)
-windows.options(width=6, height=6)
-par(mar=c(5,5,1,1))
+
+png(filename="./figures/Pond_Richness.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+
+par(mar=c(6,6,1,1))
 plot(rich_data$Loading, rich_data$mean, type='n',
      ylim=c(20, 95), xlim=c(0, 225), axes = FALSE, xlab="", ylab="")
 pred.frame <- data.frame(Loading = seq(0,225,5))
@@ -146,18 +153,22 @@ matlines(pred.frame, predict(model.dna, interval = "c", newdata=pred.frame),
          lty=c(2,3,3), lwd=c(4,2,2), col="black")
 points(rich_data$Loading, rich_data$mean,
        bg=fill.color, col="black", pch=symbol, cex=2.5, lwd=2)
-axis(side = 1, labels=T, lwd.ticks=2, cex=1.5)
-axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,100,20), las=1, cex=1.5)
+axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,100,20), las=1, cex=1.75)
 axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,100,20))
 axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,100,20))
 mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
-      side=1, line=3.5, cex=2)
+      side=1, line=4, cex=2)
 mtext("Taxa Richness", side=2, line=3, cex=2)
 legend("bottomleft", c("Total", "Active"), col="black",
        pt.bg=c("gray", "black"), pch=c(21, 24), bty='n', cex=1.5)
 box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)
 
 ################################################################################
 # Pond Evenness Plot
@@ -171,7 +182,12 @@ model.rna <- lm(mean ~ Loading, data=even_data_RNA)
 
 fill.color <- ifelse(even_data$Molecule=="DNA", "gray", "black")
 symbol <- ifelse(even_data$Molecule=="DNA", 21, 17)
-par(mar=c(5,5,1,1))
+
+png(filename="./figures/Pond_Evenness.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+
+par(mar=c(6,6,1,1))
 plot(even_data$Loading, even_data$mean, type='n',
      ylim=c(0, 0.38), xlim=c(0, 225), axes = FALSE, xlab="", ylab="")
 pred.frame <- data.frame(Loading = seq(0,225,5))
@@ -194,18 +210,22 @@ matlines(pred.frame, predict(model.dna, interval = "c", newdata=pred.frame),
          lty=c(2,3,3), lwd=c(4,2,2), col="black")
 points(even_data$Loading, even_data$mean,
        bg=fill.color, col="black", pch=symbol, cex=2.5, lwd=2)
-axis(side = 1, labels=T, lwd.ticks=2, cex=1.5)
-axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex=1.5)
+axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex=1.75)
 axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
 axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
 mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
-      side=1, line=3.5, cex=2)
+      side=1, line=4, cex=2)
 mtext("Simpson's Evenness", side=2, line=3, cex=2)
 legend("topleft", c("Total", "Active"), col="black",
        pt.bg=c("gray", "black"), pch=c(21, 24), bty='n', cex=1.5)
 box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)
 
 ################################################################################
 # Pond Diversity Plot
@@ -267,4 +287,9 @@ summary(Rich_Model)
 summary(Even_Model)
 
 
+# Linear Models
+Rich_Model2 <- lm(mean ~ Molecule/Loading, data = rich_data)
+Even_Model2 <- lm(mean ~ Molecule/Loading, data = even_data)
 
+summary(Rich_Model2)
+summary(Even_Model2)

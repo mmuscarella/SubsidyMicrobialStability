@@ -37,10 +37,13 @@
 
 # Setup Work Environment
 rm(list=ls())
-setwd("~/GitHub/pond-microbes")
+setwd("~/GitHub/SubsidyMicrobialStability")
 source("./bin/DiversityFunctions.r")
 require("vegan")
 se <- function(x, ...){sd(x, ...)/sqrt(length(na.omit(x)))}
+
+# Save Standard Plot Settings
+opar <- par(no.readonly = TRUE)  # Saves plot defaults
 
 # Define Inputs
 # Design = general design file for experiment
@@ -214,8 +217,11 @@ box(lwd=2)
 
 fill.color <- ifelse(stab_data$molecule=="DNA", "gray", "black")
 symbol <- ifelse(stab_data$molecule=="DNA", 21, 17)
-windows.options(width=6, height=6)
-par(mar=c(5,5,1,1))
+
+png(filename="./figures/Pond_Responsiveness.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+par(mar=c(6,6,1,1))
 
 plot(stab_data$load, (stab_data$stab), type='n',
      ylim=c(0, 0.45), xlim=c(0, 225), axes = FALSE, xlab="", ylab="")
@@ -243,15 +249,19 @@ matlines(pred.frame, predict(model.dna, interval = "c", newdata=pred.frame),
 points(stab_data$load, stab_data$stab, bg=fill.color, col="black",
        pch=symbol, cex=2.5, lwd=2)
 
-axis(side = 1, labels=T, lwd.ticks=2, cex=1.5)
-axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex=1.5)
+axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex=1.75)
 axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
 axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
 mtext(expression(paste("tDOC Supply Rate (g" %.% "m"^"-2",")")),
-      side=1, line=3.5, cex=2)
+      side=1, line=4, cex=2)
 mtext("Responsiveness", side=2, line=3, cex=2)
 legend("topright", c("Total", "Active"), col="black",
        pt.bg=c("gray", "black"), pch=c(21, 24), bty='n', cex=1.5)
 box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)
