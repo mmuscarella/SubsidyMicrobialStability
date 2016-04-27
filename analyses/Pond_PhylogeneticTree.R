@@ -36,7 +36,7 @@
 
 # Setup Work Environment (Directory, Packages, Source Code, Functions)
 rm(list=ls())
-setwd("~/GitHub/pond-microbes")
+setwd("~/GitHub/SubsidyMicrobialStability")
 source("./bin/DiversityFunctions.R")
 source("./bin/MothurTools.R")
 se <- function(x, ...){sd(x, ...)/sqrt(length(na.omit(x)))}
@@ -56,7 +56,7 @@ pond.fasta <- seqRFLP::read.fasta(file="./mothur/output/Pond_all.final.FW.tx.1.r
 old.names <- seqRFLP::gnames.fas(pond.fasta)
 new.names <- gsub("\\|.*$", "", gsub("^.*?\\t", "", old.names))
 new.names <- as.character(str_pad(new.names, width=3, pad="0"))
-new.names <- paste("Otu", new.names, sep="")
+new.names <- paste("OTU", new.names, sep="")
 names <- cbind(old.names, new.names)
 pond.fasta <- phylotools::rename.fasta(pond.fasta, names)
 write.fasta(pond.fasta, "./data/Pond.responders.fasta")
@@ -76,6 +76,8 @@ phy <- root(phy, outgroup, resolve.root = TRUE)
 
 # Identify responding taxa
 responders <- union(DNAcorr$X, RNAcorr$X)
+
+responders <- gsub("Otu", "OTU", responders)
 
 # Drop Tips of Zero-Occurrence OTUs (Removes Taxa Only Found via RNA Sequencing)
 phy.res <- drop.tip(phy, phy$tip.label[!phy$tip.label %in% c(responders, "Aquifex")])
