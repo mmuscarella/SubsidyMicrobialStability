@@ -183,8 +183,8 @@ plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu008"])
      las = 1, axes = FALSE, xlab="", ylab="")
   lines(lowess(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu008"])
                ~ design_DNA$Loading), lwd = 4, lty = 2)
-  axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
-  axis(side = 2, lwd.ticks=2, cex=1.75, las = 1,
+  axis(side = 1, labels=T, lwd.ticks=2, cex.axis=1.5)
+  axis(side = 2, lwd.ticks=2, cex.axis=1.5, las = 1,
        labels=c(0.001, 0.01, 0.1), at=log(c(0.001, 0.01, 0.1)))
   axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
   axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
@@ -192,7 +192,7 @@ plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu008"])
   axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=log(c(0.001, 0.01, 0.1)))
   axis(side = 2, tck=-0.015, labels=F, lwd.ticks=2,
        at=log(c(seq(0.002, 0.009, 0.001), seq(0.01, 0.1, 0.01))))
-  mtext(expression(paste("tDOC Supply Rate (g" %.% "m"^"-2",")")),
+  mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
         side=1, line=4, cex=2)
   mtext("Relative Abundance", side=2, line=4, cex=2)
   legend("topleft", expression("OTU008 ("*italic("Methylomonas sp.")*")"), bty = 'n', cex = 1.5, x.intersp = -0.5)
@@ -212,8 +212,8 @@ plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu011"])
      las = 1, axes = FALSE, xlab="", ylab="")
   lines(lowess(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu011"])
                ~ design_DNA$Loading), lwd = 4, lty = 2)
-  axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
-  axis(side = 2, lwd.ticks=2, cex=1.75, las = 1,
+  axis(side = 1, labels=T, lwd.ticks=2, cex.axis=1.5)
+  axis(side = 2, lwd.ticks=2, cex.axis=1.5, las = 1,
        labels=c(0.001, 0.01, 0.1), at=log(c(0.001, 0.01, 0.1)))
   axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
   axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
@@ -221,7 +221,7 @@ plot(log(PondsREL.raw[which(design.p$Molecule == "DNA"),"Otu011"])
   axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=log(c(0.001, 0.01, 0.1)))
   axis(side = 2, tck=-0.015, labels=F, lwd.ticks=2,
        at=log(c(seq(0.002, 0.009, 0.001), seq(0.01, 0.1, 0.01), seq(0.1, 1, 0.1))))
-  mtext(expression(paste("tDOC Supply Rate (g" %.% "m"^"-2",")")),
+  mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
         side=1, line=4, cex=2)
   mtext("Relative Abundance", side=2, line=4, cex=2)
   legend("topright", expression("OTU011 ("*italic("Rhodococcus sp.")*")"), bty = 'n', cex = 1.5)

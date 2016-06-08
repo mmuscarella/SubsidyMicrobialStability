@@ -249,13 +249,13 @@ matlines(pred.frame, predict(model.dna, interval = "c", newdata=pred.frame),
 points(stab_data$load, stab_data$stab, bg=fill.color, col="black",
        pch=symbol, cex=2.5, lwd=2)
 
-axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
-axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex=1.75)
+axis(side = 1, labels=T, lwd.ticks=2, cex.axis=1.5)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex.axis=1.5)
 axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
 axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
 axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
-mtext(expression(paste("tDOC Supply Rate (g" %.% "m"^"-2",")")),
+mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
       side=1, line=4, cex=2)
 mtext("Responsiveness", side=2, line=3, cex=2)
 legend("topright", c("Total", "Active"), col="black",
