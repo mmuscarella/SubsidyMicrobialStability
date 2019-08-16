@@ -171,6 +171,44 @@ graphics.off() # shuts down open devices
 par(opar)
 
 ################################################################################
+# Pond Richness Plot
+# RNA ##################################################################
+
+png(filename="./figures/Pond_Richness_Active.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+
+par(mar=c(6,6,1,1))
+plot(rich_data_RNA$Loading, rich_data_RNA$mean, type='n',
+     ylim=c(20, 80), xlim=c(0, 225), axes = FALSE, xlab="", ylab="")
+pred.frame <- data.frame(Loading = seq(0,225,5))
+CI.U_rna <- predict(model.rna, interval = "c", newdata=pred.frame)[, "upr"]
+CI.L_rna <- predict(model.rna, interval = "c", newdata=pred.frame)[, "lwr"]
+pred.frame2 <- unlist(pred.frame)
+X.Vec_rna <- c(pred.frame2, tail(pred.frame2, 1), rev(pred.frame2),
+               head(pred.frame2, 1))
+Y.Vec_rna <- c(CI.U_rna, tail(CI.L_rna, 1), rev(CI.L_rna), head(CI.U_rna,1))
+polygon(X.Vec_rna, Y.Vec_rna, col = "gray90", border = NA)
+matlines(pred.frame, predict(model.rna, interval = "c", newdata=pred.frame),
+         lty=c(2,3,3), lwd=c(4,2,2), col="black")
+points(rich_data_RNA$Loading, rich_data_RNA$mean[],
+       bg="gray", col="black", pch=21, cex=2.5, lwd=2)
+axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,100,20), las=1, cex=1.75)
+axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,100,20))
+axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,100,20))
+mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
+      side=1, line=4, cex=2)
+mtext("Phylotype Richness", side=2, line=3, cex=2)
+box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)
+
+################################################################################
 # Pond Evenness Plot
 # DNA and RNA ##################################################################
 
@@ -221,6 +259,44 @@ mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
 mtext("Simpson's Evenness", side=2, line=3, cex=2)
 legend("topleft", c("Total", "Active"), col="black",
        pt.bg=c("gray", "black"), pch=c(21, 24), bty='n', cex=1.5)
+box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)
+
+################################################################################
+# Pond Evenness Plot
+# RNA ##################################################################
+
+png(filename="./figures/Pond_Evenness_Active.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+
+par(mar=c(6,6,1,1))
+plot(even_data_RNA$Loading, even_data_RNA$mean, type='n',
+     ylim=c(0, 0.18), xlim=c(0, 225), axes = FALSE, xlab="", ylab="")
+pred.frame <- data.frame(Loading = seq(0,225,5))
+CI.U_rna <- predict(model.rna, interval = "c", newdata=pred.frame)[, "upr"]
+CI.L_rna <- predict(model.rna, interval = "c", newdata=pred.frame)[, "lwr"]
+pred.frame2 <- unlist(pred.frame)
+X.Vec_rna <- c(pred.frame2, tail(pred.frame2, 1), rev(pred.frame2),
+               head(pred.frame2, 1))
+Y.Vec_rna <- c(CI.U_rna, tail(CI.L_rna, 1), rev(CI.L_rna), head(CI.U_rna,1))
+polygon(X.Vec_rna, Y.Vec_rna, col = "gray90", border = NA)
+matlines(pred.frame, predict(model.rna, interval = "c", newdata=pred.frame),
+         lty=c(2,3,3), lwd=c(4,2,2), col="black")
+points(even_data_RNA$Loading, even_data_RNA$mean,
+       bg="gray", col="black", pch=21, cex=2.5, lwd=2)
+axis(side = 1, labels=T, lwd.ticks=2, cex=1.75)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.05), las=1, cex=1.75)
+axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.05))
+axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.05))
+mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
+      side=1, line=4, cex=2)
+mtext("Simpson's Evenness", side=2, line=3, cex=2)
 box(lwd=2)
 
 dev.off() # this writes plot to folder

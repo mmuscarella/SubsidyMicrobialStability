@@ -58,3 +58,55 @@ mtext(expression(paste("DOC (mg C L"^" -1",")", sep="")), side=2, line=2.5, cex=
 dev.off()
 
 
+################################################################################
+#### BGE - from Plos Paper ##############################################
+################################################################################
+DOC[which(DOC$Date == "2009-08-19"), ]
+bge <- c(0.560, 0.467, 0.534, 0.499, 0.486, 0.503, 0.497, 0.462, 0.381, 0.424)
+mean.supply <- aggregate(DOC$ppm, by = list(DOC$Pond), FUN = mean)
+doc <- c(692, 781, 823, 950, 959, 1114, 1362, 1540, 1460, 1756)
+pond <- c(10, 9, 3, 4, 8, 15, 7, 13, 16, 14)
+loading <- c(0, 55.72, 25.72, 115.2, 84.12, 133.41, 151.63, 184.31, 201.46, 212.71)
+
+model.bge <- lm(bge ~ loading)
+
+png(filename="./figures/Pond_BGE.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+par(mar=c(6,6,1,1))
+
+plot(loading, bge, type='n',
+     ylim=c(0.35, 0.6), xlim=c(0, 225), axes = FALSE, xlab="", ylab="")
+
+pred.frame <- data.frame(loading = seq(0,225,5))
+
+CI.U <- predict(model.bge, interval = "c", newdata=pred.frame)[, "upr"]
+CI.L <- predict(model.bge, interval = "c", newdata=pred.frame)[, "lwr"]
+pred.frame2 <- unlist(pred.frame)
+
+X.Vec <- c(pred.frame2, tail(pred.frame2, 1), rev(pred.frame2),
+               head(pred.frame2, 1))
+Y.Vec <- c(CI.U, tail(CI.L, 1), rev(CI.L), head(CI.U,1))
+polygon(X.Vec, Y.Vec, col = "gray90", border = NA)
+
+matlines(pred.frame, predict(model.bge, interval = "c", newdata=pred.frame),
+         lty=c(2,3,3), lwd=c(4,3,3), col="black")
+
+points(loading, bge, bg="gray", col="black",
+       pch=21, cex=2.5, lwd=2)
+
+axis(side = 1, labels=T, lwd.ticks=2, cex.axis=1.5)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex.axis=1.5)
+axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
+axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
+mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
+      side=1, line=4, cex=2)
+mtext("Growth Efficiency", side=2, line=3, cex=2)
+
+box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)

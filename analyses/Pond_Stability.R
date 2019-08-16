@@ -265,3 +265,52 @@ box(lwd=2)
 dev.off() # this writes plot to folder
 graphics.off() # shuts down open devices 
 par(opar)
+
+
+################################################################################
+#### Responsiveness Plot - Active ##############################################
+################################################################################
+
+model.rna <- lm(stab ~ load, data=stab_data_RNA[-3, ])
+
+png(filename="./figures/Pond_Responsiveness_Active.png",
+    width = 1400, height = 1200, res = 96*2)
+par(opar)
+par(mar=c(6,6,1,1))
+
+plot(stab_data_RNA$load, (stab_data_RNA$stab), type='n',
+     ylim=c(0.1, 0.5), xlim=c(0, 225), axes = FALSE, xlab="", ylab="")
+
+pred.frame <- data.frame(load = seq(0,225,5))
+
+CI.U_rna <- predict(model.rna, interval = "c", newdata=pred.frame)[, "upr"]
+CI.L_rna <- predict(model.rna, interval = "c", newdata=pred.frame)[, "lwr"]
+pred.frame2 <- unlist(pred.frame)
+
+X.Vec_rna <- c(pred.frame2, tail(pred.frame2, 1), rev(pred.frame2),
+               head(pred.frame2, 1))
+Y.Vec_rna <- c(CI.U_rna, tail(CI.L_rna, 1), rev(CI.L_rna), head(CI.U_rna,1))
+polygon(X.Vec_rna, Y.Vec_rna, col = "gray90", border = NA)
+
+matlines(pred.frame, predict(model.rna, interval = "c", newdata=pred.frame),
+         lty=c(2,3,3), lwd=c(4,3,3), col="black")
+
+points(stab_data_RNA$load[-c(3)], stab_data_RNA$stab[-3], bg="gray", col="black",
+       pch=21, cex=2.5, lwd=2)
+
+axis(side = 1, labels=T, lwd.ticks=2, cex.axis=1.5)
+axis(side = 2, labels=T, lwd.ticks=2, at=seq(0,0.5,0.1), las=1, cex.axis=1.5)
+axis(side = 1, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 2, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
+axis(side = 3, tck=0.01, labels=F, lwd.ticks=2)
+axis(side = 4, tck=0.01, labels=F, lwd.ticks=2, at=seq(0,0.5,0.1))
+mtext(expression(paste("tDOC Supply Rate (g m"^"-2",")")),
+      side=1, line=4, cex=2)
+mtext("Responsiveness", side=2, line=3, cex=2)
+
+box(lwd=2)
+
+dev.off() # this writes plot to folder
+graphics.off() # shuts down open devices 
+par(opar)
+
